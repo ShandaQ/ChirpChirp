@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+<div>
+  <form class="form-inline" action="/post_tweet" method="POST">
+    <div class="form-group">
+      <input type="text" class="form-control" name="tweet_chirp" placeholder="what's your chirp">
+    </div>
+    <button type="submit" class="btn btn-info">Chirp</button>
+  </form>
+
+  <ul>
+  {% for global_tweet in global_tweets %}
+    <li> {{global_tweet.username}} - {{global_tweet.content}} - {{global_tweet.date_}}</li>
+    <hr>
+  {% endfor %}
+  </ul>
+</div>
+{% endblock %}}

@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- <form action="/login_form" method="POST"> -->
+  <!-- <div>
+    <p>
+      <label for="user">Username</label>
+      <input type="text" name="username">
+      <label for="user">Password</label>
+      <input type="password" placeholder="be creative" name="password" required>
+    </p>
+    <button class="btn btn-primary" type="submit">Login</button>
+  </div> -->
+<!-- </form> -->
+<div class="loginBox">
+  <h3 class="logintitle">LOGIN</h3>
+  <hr>
+  <div class="col-md-4 loginBox2" style="margin-left:15%;">
+    <form action="/login_form" method="POST">
+      <fieldset class="form-group">
+        <label for="formGroupExampleInput">Username</label>
+        <input type="text" class="form-control" id="formGroupExampleInput" placeholder="username" name="username">
+      </fieldset>
+      <fieldset class="form-group">
+        <label for="formGroupExampleInput2">Password</label>
+        <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="be creative" name="password">
+      </fieldset>
+    </form>
+    <button class="btn loginbutton" type="submit">Login</button>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
+
+
+<form action="/login_form" method="POST">
+  <fieldset class="form-group">
+    <label for="formGroupExampleInput">Username</label>
+    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="username" name="username">
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="formGroupExampleInput2">Password</label>
+    <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="be creative" name="password">
+  </fieldset>
+</form>

@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block body %}
+<div>
+  <h1 name="username">{{name}}</h1>
+  <p>Tweets {{tweet_count[0][0]}}</p>
+  <p>Following {{following_count[0][0]}}</p>
+  <p>Followers {{following_me_count[0][0]}}</p>
+
+  <!-- <form action="/follow_user" method="POST">
+    <button class="btn btn-primary" type="submit">Follow</button>
+  </form> -->
+
+  <form class="form-inline" action="/post_tweet" method="POST">
+    <div class="form-group">
+      <input type="text" class="form-control" name="tweet_chirp" placeholder="what's your chirp">
+    </div>
+    <button type="submit" class="btn btn-info">Chirp</button>
+  </form>
+
+  <ul>
+    {% for tweet in tweets %}
+      <li> {{tweet.content}} - {{tweet.date_}}</li>
+      <hr>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}
