@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, session
 
 import datetime
 import pg
+import bcrypt
 
 # create an flask object
 app = Flask("MyApp")
@@ -68,22 +69,61 @@ def user_timeline():
 # when the user hits the login button check that the userename exists in the database
 @app.route('/login_form', methods=['POST'])
 def login_in():
-    # gets the username from the form and takes that name to see if it exist in the database
     user_name = request.form['username']
+    secret = request.form['password']
+    action = request.form['action']
+
+
+    # gets the username from the form and takes that name to see if it exist in the database
+    # user_name = request.form['username']
     query = db.query('''
-        select username from users where username = $1''',user_name)
-
+        select username, pswd
+        from users
+        where username = $1''',user_name)
     # turns the results from the query into a tulpe
-    is_user = query.namedresult()
-    # print 'is_user' , is_user
+    _user = query.namedresult()
 
-    # if the username is not in the database thank redirect them back to the login page
-    if not is_user:
-        return redirect('/')
-    # if the username is in the database create a session and send them to the top level page, where user tweets and followers and following count will be showed
-    else:
-        session['username'] = request.form['username']
-        return redirect('/')
+    #if user is trying to register
+    if action == 'register':
+        query = db.query('''
+            select username from users where username = $1''',user_name)
+        _user = query.namedresult()
+
+        # if this user does not exist in the database
+        # encrypt the pswd and insert the username and password into the user table
+        if not _user:
+            pw_bytes = secret.encode('utf-8')
+            hashed = bcrypt.hashpw(pw_bytes, bcrypt.gensalt())
+
+            db.insert('users', username = user_name, pswd= hashed)
+
+            # take them to the user_timeline
+            session['username'] = request.form['username']
+            return redirect('/')
+        if _user:
+            session['username'] = request.form['username']
+            return redirect('/')
+
+
+    #if user is trying to log in
+    if action == 'login':
+        # if user does not exist in the db
+        # redirect them back to the login page
+        if _user:
+            # check to make sure that the user enter the correct password
+            pw_bytes = secret.encode('utf-8')
+            # print _user[0].pswd
+            if bcrypt.hashpw(pw_bytes,_user[0].pswd) == _user[0].pswd:
+                # if the pwsd is correct  create a session and send them to the top level page, where user tweets and followers and following count will be showed
+                session['username'] = request.form['username']
+                return redirect('/')
+        elif not _user:
+            print "tried to login user does not exist"
+            return redirect('/')
+
+
+
+
 
 # when a user posts a tweet/chirp
 @app.route('/post_tweet', methods=['POST'])

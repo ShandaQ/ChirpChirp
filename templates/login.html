@@ -1,20 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
-<!-- <form action="/login_form" method="POST"> -->
-  <!-- <div>
-    <p>
-      <label for="user">Username</label>
-      <input type="text" name="username">
-      <label for="user">Password</label>
-      <input type="password" placeholder="be creative" name="password" required>
-    </p>
-    <button class="btn btn-primary" type="submit">Login</button>
-  </div> -->
-<!-- </form> -->
-<div class="loginBox">
-  <h3 class="logintitle">LOGIN</h3>
-  <hr>
-  <div class="col-md-4 loginBox2" style="margin-left:15%;">
+<div class="container loginBox">
+
+  <div class="col-md-4 loginBox2">
+    <h3 class="logintitle">LOGIN/REGISTER</h3>
+    <hr style="border-top: 1px solid black;">
     <form action="/login_form" method="POST">
       <fieldset class="form-group">
         <label for="formGroupExampleInput">Username</label>
@@ -24,8 +14,12 @@
         <label for="formGroupExampleInput2">Password</label>
         <input type="password" class="form-control" id="formGroupExampleInput2" placeholder="be creative" name="password">
       </fieldset>
+      <fieldset class="login_register_btn">
+        <button class="btn loginbutton" type="submit" name="action" value="login">Login</button>
+        <button class="btn loginbutton" type="submit" name="action" value="register">Register</button>
+      </fieldset>
     </form>
-    <button class="btn loginbutton" type="submit">Login</button>
+
   </div>
 </div>
 

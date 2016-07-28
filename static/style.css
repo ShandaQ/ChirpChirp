@@ -4,25 +4,29 @@ ul{
 
 
 /* Login Page*/
-/*.loginBox {
-  margin-top: 150px;
-  margin-left: 320px;
+
+.login_register_btn{
+  margin-left: 27%;
+  color: green;
 }
+
 .loginBox2 {
   padding-bottom: 20px;
   background-color: #f1e7da;
   width: 300px;
   box-shadow: 1px 5px 5px #888888;
+  margin-left: 33%;
 }
-h3 {
-  text-align: center;
+.logintitle{
+  margin-left: 21%;
 }
+hr {
+  border-top: 1px solid black;
+}
+/*
+
 .loginbutton {
   text-align: center;
   margin-left: 35%;
 }
-hr {
-  background-color:#003300;
-  height: 1px;
-  border: 0;
-}*/
+*/
