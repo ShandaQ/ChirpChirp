@@ -14,6 +14,7 @@ db = pg.DB(dbname = 'chirps')
 # loads the profile page of the session[username]
 @app.route('/<user>')
 def user_timeline(user):
+
         query_tweets = db.query('''
             select tweets.author_id, tweets.date_, tweets.content
             from tweets
@@ -42,11 +43,36 @@ def user_timeline(user):
               left join users on friends.queen_king_id = users.id
             where users.username = $1''', user)
 
+
+
+        # print qfm_2
+
+        #get the of the current session user id
+        current_session_user = db.query('''
+            select users.id
+            from users
+            where users.username = $1''', session['username'])
+        print "current_session_user", current_session_user
+        c_session_user = current_session_user.namedresult()[0][0]
+
+        # get the id of ppl who follow them
+        query_following_me2 = db.query('''
+            select friends.peasants, friends.queen_king_id, users.username
+            from friends
+              left join users on friends.queen_king_id = users.id
+            where users.username = $1 and friends.peasants= $2; ''', user, c_session_user)
+        print query_following_me2
+
+        t_f = len(query_following_me2.namedresult())
+
         # convert the queriers over to an array of tuples
         tweets = query_tweets.namedresult()
         tweet_count = query_num_tweets.namedresult()
         following_count = query_following.namedresult()
         following_me_count = query_following_me.namedresult()
+        qfm_2 = query_following_me2.namedresult()
+
+        # print c_session_user
 
         # print 'tweet_count', tweet_count
         # print tweets
@@ -59,7 +85,10 @@ def user_timeline(user):
             tweets = tweets,
             tweet_count = tweet_count,
             following_count = following_count,
-            following_me_count = following_me_count)
+            following_me_count = following_me_count,
+            query_following_me2 = qfm_2,
+            c_session_user = c_session_user,
+            t_f = t_f)
 
 @app.route('/login')
 def login():
@@ -121,7 +150,7 @@ def login_in():
 # followe a user
 @app.route('/follow', methods=['POST'])
 def follow_user():
-    # get login user id
+    action = request.form['action']
 
     # get id of the user whose page is currently being views
     follow_me = request.form['follow']
@@ -132,13 +161,20 @@ def follow_user():
         from users
         where users.username in ($1, $2)''',session['username'], follow_me)
     i_want_to_follow = query.namedresult()
-    # print i_want_to_follow
+    print i_want_to_follow
     # print i_want_to_follow[0].id
     # print i_want_to_follow[1].id
-    db.insert('friends', queen_king_id=i_want_to_follow[1].id, peasants=i_want_to_follow[0].id)
+
+    #if user is trying to follew
+    if action == 'follow':
+        db.insert('friends', queen_king_id=i_want_to_follow[1].id, peasants=i_want_to_follow[0].id)
+
+    # if user is trying to unfollow
+    if action == 'unfollow':
+        db.query(''' delete from friends
+        where queen_king_id = $1 and peasants = $2''',i_want_to_follow[1].id, i_want_to_follow[0].id)
 
 
-# db.insert into ('friends', )
     return redirect(request.referrer)
 
 # when a user posts a tweet/chirp

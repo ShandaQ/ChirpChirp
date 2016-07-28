@@ -5,17 +5,25 @@
   <p>Tweets {{tweet_count[0][0]}}</p>
   <p>Following {{following_count[0][0]}}</p>
   <p>Followers {{following_me_count[0][0]}}</p>
+
   <form action="/follow" method="POST">
-    <input type="hidden" name="follow" value="{{name}}">
-    <button type="submit" class="btn btn-info">Follow</button>
+    {% if t_f %}
+      <input type="hidden" name="follow" value="{{name}}">
+      <button type="submit" name="action" value="unfollow" class="btn btn-info">Unfollow</button>
+
+    {% else %}
+      <!-- <form action="/follow" method="POST"> -->
+      <input type="hidden" name="follow" value="{{name}}">
+      <button type="submit" name="action" value="follow" class="btn btn-info">Follow</button>
+    {% endif %}
   </form>
 
 
   <form class="form-inline" action="/post_tweet" method="POST">
     <div class="form-group">
       <input type="text" class="form-control" name="tweet_chirp" placeholder="what's your chirp">
+      <button type="submit" class="btn btn-info">Chirp</button>
     </div>
-    <button type="submit" class="btn btn-info">Chirp</button>
   </form>
 
   <ul>
