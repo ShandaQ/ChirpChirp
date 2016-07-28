@@ -19,10 +19,10 @@
   </head>
   <body>
     <ul class="nav nav-tabs">
-      <li role="presentation"><a href="/global_timeline">Home</a></li>
-      <li role="presentation"><a href="/">Profile</a></li>
+      <li role="presentation"><a href="/{{session['username']}}">Profile</a></li>
+      <li role="presentation"><a href="/">Home</a></li>
       <li role="presentation"><a href="/log_out">Log Out</a></li>
-      <li role="presentation"><a href="/">Login as {{name}}</a></li>
+      <li role="presentation"><a href="/login">Login as {{session['username']}}</a></li>
     </ul>
 
     {% block body %}{% endblock %}

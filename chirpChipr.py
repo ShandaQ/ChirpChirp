@@ -11,12 +11,9 @@ app = Flask("MyApp")
 # connect to the PostgreSQl database
 db = pg.DB(dbname = 'chirps')
 
-@app.route('/')
-def user_timeline():
-    #  if a username exition in the session
-    if 'username' in session:
-        user = session['username']
-        # get all of the user tweets
+# loads the profile page of the session[username]
+@app.route('/<user>')
+def user_timeline(user):
         query_tweets = db.query('''
             select tweets.author_id, tweets.date_, tweets.content
             from tweets
@@ -58,13 +55,15 @@ def user_timeline():
 
         # send that information over to the html page to be displayed to the user
         return render_template('user_profile.html',
-            name=session['username'],
+            name=user,
             tweets = tweets,
             tweet_count = tweet_count,
             following_count = following_count,
             following_me_count = following_me_count)
-    else:
-        return render_template('login.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
 
 # when the user hits the login button check that the userename exists in the database
 @app.route('/login_form', methods=['POST'])
@@ -73,9 +72,7 @@ def login_in():
     secret = request.form['password']
     action = request.form['action']
 
-
     # gets the username from the form and takes that name to see if it exist in the database
-    # user_name = request.form['username']
     query = db.query('''
         select username, pswd
         from users
@@ -121,13 +118,32 @@ def login_in():
             print "tried to login user does not exist"
             return redirect('/')
 
+# followe a user
+@app.route('/follow', methods=['POST'])
+def follow_user():
+    # get login user id
+
+    # get id of the user whose page is currently being views
+    follow_me = request.form['follow']
+    print session['username'], 'wants to follow ', follow_me
+
+    query = db.query('''
+        select users.id
+        from users
+        where users.username in ($1, $2)''',session['username'], follow_me)
+    i_want_to_follow = query.namedresult()
+    # print i_want_to_follow
+    # print i_want_to_follow[0].id
+    # print i_want_to_follow[1].id
+    db.insert('friends', queen_king_id=i_want_to_follow[1].id, peasants=i_want_to_follow[0].id)
 
 
-
+# db.insert into ('friends', )
+    return redirect(request.referrer)
 
 # when a user posts a tweet/chirp
 @app.route('/post_tweet', methods=['POST'])
-def follow_user():
+def post_tweet():
     # get tweet_chirp from the form
     tweet_chirp = request.form['tweet_chirp']
     print "tweet_chirp", tweet_chirp
@@ -149,11 +165,20 @@ def follow_user():
 
     return redirect('/')
 
-# global time times
-@app.route('/global_timeline', methods=['GET'])
+# global timeline, if the user is logged in show their tweets and everyont they followe tweets
+# if no user is logged in. show all the tweets in the systems
+@app.route('/', methods=['GET'])
 def global_timeline():
     if not 'username' in session:
-        return redirect('/')
+        query = db.query('''
+        select users.username,tweets.content, tweets.date_
+        from tweets
+             left join users on tweets.author_id = users.id''')
+
+        global_tweets = query.namedresult()
+        return render_template('global_timeline.html',
+            # name=session['username'],
+            global_tweets = global_tweets)
     else:
     #  'username' in session:
         user = session['username']
@@ -169,9 +194,9 @@ def global_timeline():
                                     where users.username = $1)
             or users.username = $1
             order by date_ desc''', user)
-
         global_tweets = query.namedresult()
-        print 'global_tweets', global_tweets
+
+        # print 'global_tweets', global_tweets
 
         return render_template('global_timeline.html',
             name=session['username'],
@@ -184,7 +209,7 @@ def log_out():
 
     if 'username' in session:
         del session['username']
-    return redirect('/')
+    return redirect('/login')
 
 
 # show user profile page

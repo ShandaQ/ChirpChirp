@@ -5,10 +5,11 @@
   <p>Tweets {{tweet_count[0][0]}}</p>
   <p>Following {{following_count[0][0]}}</p>
   <p>Followers {{following_me_count[0][0]}}</p>
+  <form action="/follow" method="POST">
+    <input type="hidden" name="follow" value="{{name}}">
+    <button type="submit" class="btn btn-info">Follow</button>
+  </form>
 
-  <!-- <form action="/follow_user" method="POST">
-    <button class="btn btn-primary" type="submit">Follow</button>
-  </form> -->
 
   <form class="form-inline" action="/post_tweet" method="POST">
     <div class="form-group">
