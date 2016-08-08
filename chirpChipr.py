@@ -1,3 +1,8 @@
+# dotenv module helps to manage db credentials
+from dotenv import load_dotenv, find_dotenv
+import os
+load_dotenv(find_dotenv())
+
 # the Flask class from the flask module
 from flask import Flask, render_template, request, redirect, session
 
@@ -9,7 +14,17 @@ import bcrypt
 app = Flask("MyApp")
 
 # connect to the PostgreSQl database
-db = pg.DB(dbname = 'chirps')
+# db = pg.DB(dbname = 'chirps')
+
+# connect to the db via heroku
+db = pg.DB(
+    dbname=os.environ.get('DBNAME'),
+    host=os.environ.get('DBHOST'),
+    port=int(os.environ.get('DBPORT')),
+    user=os.environ.get('DBUSER'),
+    passwd=os.environ.get('DBPASSWORD')
+)
+
 
 # loads the profile page of the session[username]
 @app.route('/<user>')
